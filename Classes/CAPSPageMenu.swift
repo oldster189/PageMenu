@@ -298,6 +298,9 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
             configureUserInterface()
         }
         
+        /****************************** Meaw ******************************/
+        addImageOverMyMenuItem()
+        
         if iconIndicator {
             moveSelectionIndicator(currentPageIndex)
         }
@@ -854,6 +857,13 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                       self.menuItems[self.currentPageIndex].titleLabel!.font = self.selectedMenuItemFont
                     }
                 }
+                
+                /****************************** Meaw ******************************/
+                if (pageIndex == 0) {
+                    self.removeImageOverMyMenuItem(isFocus: true)
+                } else {
+                    self.removeImageOverMyMenuItem(isFocus: false)
+                }
             })
         }
     }
@@ -1118,6 +1128,68 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 let xOffset : CGFloat = CGFloat(index) * self.controllerScrollView.frame.width
                 self.controllerScrollView.setContentOffset(CGPoint(x: xOffset, y: self.controllerScrollView.contentOffset.y), animated: false)
             })
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    /****************************** Meaw ******************************/
+    func addImageOverMyMenuItem() {
+        let index = 0
+        let imageWidth = CGFloat(25.0)
+        let imageHeight = CGFloat(25.0)
+        
+        var labelFrame = self.menuItems[index].titleLabel!.frame
+        labelFrame.origin.x = imageWidth / 1.5
+        self.menuItems[index].titleLabel!.frame = labelFrame
+        
+        var imageFrame = self.menuItems[index].titleLabel!.frame
+        
+        let imageFocus: UIImage = UIImage(named: "tab2_focus")!
+        let bgImageFocus = UIImageView(image: imageFocus)
+        
+        let imageNormal: UIImage = UIImage(named: "tab2")!
+        let bgImageNormal = UIImageView(image: imageNormal)
+        
+        imageFrame.origin.y = (imageFrame.size.height - imageHeight) / 1.8
+        imageFrame.origin.x = imageWidth / 2.5
+        imageFrame.size.width = imageWidth
+        imageFrame.size.height = imageHeight
+        
+        bgImageFocus.frame = imageFrame
+        bgImageFocus.tag = 8888
+        bgImageFocus.alpha = 1.0
+        
+        bgImageNormal.frame = imageFrame
+        bgImageNormal.tag = 9999
+        bgImageNormal.alpha = 0.0
+        
+        self.menuItems[index].addSubview(bgImageFocus)
+        self.menuItems[index].addSubview(bgImageNormal)
+    }
+    
+    func removeImageOverMyMenuItem(isFocus:Bool) {
+        let index = 0
+        if (isFocus) {
+            if let bgImage = self.menuItems[index].viewWithTag(8888) {
+                bgImage.alpha = 1.0
+            }
+            
+            if let bgImage = self.menuItems[index].viewWithTag(9999) {
+                bgImage.alpha = 0.0
+            }
+        } else {
+            if let bgImage = self.menuItems[index].viewWithTag(8888) {
+                bgImage.alpha = 0.0
+            }
+            
+            if let bgImage = self.menuItems[index].viewWithTag(9999) {
+                bgImage.alpha = 1.0
+            }
         }
     }
 }
