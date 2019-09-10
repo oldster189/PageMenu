@@ -67,6 +67,7 @@ public enum CAPSPageMenuOption {
     case selectionIndicatorColor(UIColor)
     case menuItemSeparatorColor(UIColor)
     case menuMargin(CGFloat)
+    case menuPadding(CGFloat)
     case menuItemMargin(CGFloat)
     case menuHeight(CGFloat)
     case selectedMenuItemLabelColor(UIColor)
@@ -232,6 +233,8 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                     menuItemSeparatorColor = value
                 case let .menuMargin(value):
                     menuMargin = value
+                case let .menuPadding(value):
+                    menuPadding = value
                 case let .menuItemMargin(value):
                     menuItemMargin = value
                 case let .menuHeight(value):
