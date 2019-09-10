@@ -106,6 +106,10 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
     var menuItems : [MenuItemView] = []
     var menuItemWidths : [CGFloat] = []
     
+    /****************************** Meaw ******************************/
+    open var menuPadding : CGFloat = 10.0
+    open var iconWidth : CGFloat = 35.0
+    
     open var menuHeight : CGFloat = 34.0
     open var menuMargin : CGFloat = 15.0
     open var menuItemWidth : CGFloat = 111.0
@@ -447,12 +451,21 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 
                 let itemWidthRect : CGRect = (titleText as NSString).boundingRect(with: CGSize(width: 1000, height: 1000), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font:menuItemFont], context: nil)
                 
-                menuItemWidth = itemWidthRect.width
-                
-                menuItemFrame = CGRect(x: totalMenuItemWidthIfDifferentWidths + menuMargin + (menuMargin * index), y: 0.0, width: menuItemWidth, height: menuHeight)
-                
-                totalMenuItemWidthIfDifferentWidths += itemWidthRect.width
-                menuItemWidths.append(itemWidthRect.width)
+                if index == 0 {
+                    menuItemWidth = itemWidthRect.width + menuPadding + iconWidth
+                    
+                    menuItemFrame = CGRect(x: totalMenuItemWidthIfDifferentWidths + menuMargin + (menuMargin * index), y: 0.0, width: menuItemWidth, height: menuHeight)
+                    
+                    totalMenuItemWidthIfDifferentWidths += itemWidthRect.width + menuPadding + iconWidth
+                    menuItemWidths.append(itemWidthRect.width + menuPadding + iconWidth)
+                } else {
+                    menuItemWidth = itemWidthRect.width + menuPadding
+                    
+                    menuItemFrame = CGRect(x: totalMenuItemWidthIfDifferentWidths + menuMargin + (menuMargin * index), y: 0.0, width: menuItemWidth, height: menuHeight)
+                    
+                    totalMenuItemWidthIfDifferentWidths += itemWidthRect.width + menuPadding
+                    menuItemWidths.append(itemWidthRect.width + menuPadding)
+                }
             } else {
                 if centerMenuItems && index == 0.0  {
                     startingMenuMargin = ((self.view.frame.width - ((CGFloat(controllerArray.count) * menuItemWidth) + (CGFloat(controllerArray.count - 1) * menuMargin))) / 2.0) -  menuMargin
@@ -601,7 +614,11 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 
                 let itemWidthRect = controllerTitle.boundingRect(with: CGSize(width: 1000, height: 1000), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font:menuItemFont], context: nil)
                 
-                menuItemWidth = itemWidthRect.width
+                if index == 0 {
+                    menuItemWidth = itemWidthRect.width + menuPadding + iconWidth
+                } else {
+                    menuItemWidth = itemWidthRect.width + menuPadding
+                }
                 
                 var margin: CGFloat
                 if index == 0 {
@@ -859,7 +876,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 }
                 
                 /****************************** Meaw ******************************/
-                if (pageIndex == 0) {
+                if pageIndex == 0 {
                     self.removeImageOverMyMenuItem(isFocus: true)
                 } else {
                     self.removeImageOverMyMenuItem(isFocus: false)
@@ -1174,7 +1191,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
     
     func removeImageOverMyMenuItem(isFocus:Bool) {
         let index = 0
-        if (isFocus) {
+        if isFocus {
             if let bgImage = self.menuItems[index].viewWithTag(8888) {
                 bgImage.alpha = 1.0
             }
