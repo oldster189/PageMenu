@@ -138,17 +138,17 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
     open var menuItemSeparatorColor : UIColor = UIColor.lightGray
     
     open var menuItemFont : UIFont = UIFont.systemFont(ofSize: 15.0)
-  private var _selectedMenuItemFont: UIFont? = nil
-
-  open var selectedMenuItemFont : UIFont {
-    get {
-      return _selectedMenuItemFont ?? menuItemFont
+    private var _selectedMenuItemFont: UIFont? = nil
+    
+    open var selectedMenuItemFont : UIFont {
+        get {
+            return _selectedMenuItemFont ?? menuItemFont
+        }
+        set {
+            _selectedMenuItemFont = newValue
+        }
     }
-    set {
-      _selectedMenuItemFont = newValue
-    }
-  }
-
+    
     open var menuItemSeparatorPercentageHeight : CGFloat = 0.2
     open var menuItemSeparatorWidth : CGFloat = 0.5
     open var menuItemSeparatorRoundEdges : Bool = false
@@ -250,7 +250,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                 case let .menuItemFont(value):
                     menuItemFont = value
                 case let .selectedMenuItemFont(value):
-                  selectedMenuItemFont = value
+                    selectedMenuItemFont = value
                 case let .menuItemSeparatorPercentageHeight(value):
                     menuItemSeparatorPercentageHeight = value
                 case let .menuItemWidth(value):
@@ -306,7 +306,11 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         }
         
         /****************************** Meaw ******************************/
-        addImageOverMyMenuItem()
+        addImageOverMyMenuItem(index: 0)
+        addImageOverMyMenuItem(index: 1)
+        addImageOverMyMenuItem(index: 2)
+        addImageOverMyMenuItem(index: 3)
+        removeImageOverMyMenuItem(index: 0, isFocus: true)
         
         if iconIndicator {
             moveSelectionIndicator(currentPageIndex)
@@ -554,7 +558,7 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
         if menuItems.count > 0 {
             if menuItems[currentPageIndex].titleLabel != nil {
                 menuItems[currentPageIndex].titleLabel!.textColor = selectedMenuItemLabelColor
-              menuItems[currentPageIndex].titleLabel!.font = selectedMenuItemFont
+                menuItems[currentPageIndex].titleLabel!.font = selectedMenuItemFont
             }
         }
         
@@ -874,16 +878,13 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
                         self.menuItems[self.lastPageIndex].titleLabel!.font = self.menuItemFont
                         self.menuItems[self.lastPageIndex].titleLabel!.textColor = self.unselectedMenuItemLabelColor
                         self.menuItems[self.currentPageIndex].titleLabel!.textColor = self.selectedMenuItemLabelColor
-                      self.menuItems[self.currentPageIndex].titleLabel!.font = self.selectedMenuItemFont
+                        self.menuItems[self.currentPageIndex].titleLabel!.font = self.selectedMenuItemFont
                     }
                 }
                 
                 /****************************** Meaw ******************************/
-                if pageIndex == 0 {
-                    self.removeImageOverMyMenuItem(isFocus: true)
-                } else {
-                    self.removeImageOverMyMenuItem(isFocus: false)
-                }
+                self.resetAllImage()
+                self.removeImageOverMyMenuItem(index: pageIndex, isFocus: true)
             })
         }
     }
@@ -1158,42 +1159,72 @@ open class CAPSPageMenu: UIViewController, UIScrollViewDelegate, UIGestureRecogn
     
     
     /****************************** Meaw ******************************/
-    func addImageOverMyMenuItem() {
-        let index = 0
-        let imageWidth = CGFloat(25.0)
-        let imageHeight = CGFloat(25.0)
+    func addImageOverMyMenuItem(index: Int) {
+        let imageWidth = CGFloat(36.0)
+        let imageHeight = CGFloat(36.0)
         
-        var labelFrame = self.menuItems[index].titleLabel!.frame
-        labelFrame.origin.x = imageWidth / 1.5
-        self.menuItems[index].titleLabel!.frame = labelFrame
+        //        var labelFrame = self.menuItems[index].titleLabel!.frame
+        //        labelFrame.origin.x = imageWidth / 1.5
+        //        self.menuItems[index].titleLabel!.frame = labelFrame
         
         var imageFrame = self.menuItems[index].titleLabel!.frame
         
-        let imageFocus: UIImage = UIImage(named: "tab2_focus")!
+        var normal = ""
+        var focus = ""
+        switch index {
+        case 0:
+            normal = "supermatch1"
+            focus = "supermatch1_focus"
+        case 1:
+            normal = "supermatch2"
+            focus = "supermatch2_focus"
+        case 2:
+            normal = "supermatch3"
+            focus = "supermatch3_focus"
+        case 3:
+            normal = "supermatch4"
+            focus = "supermatch4_focus"
+        default:
+            normal = ""
+            focus = ""
+        }
+        
+        let imageFocus: UIImage = UIImage(named: focus)!
         let bgImageFocus = UIImageView(image: imageFocus)
         
-        let imageNormal: UIImage = UIImage(named: "tab2")!
+        let imageNormal: UIImage = UIImage(named: normal)!
         let bgImageNormal = UIImageView(image: imageNormal)
         
         imageFrame.origin.y = (imageFrame.size.height - imageHeight) / 1.8
-        imageFrame.origin.x = imageWidth / 2.5
+        imageFrame.origin.x = (imageFrame.size.width - imageWidth) / 2.0
         imageFrame.size.width = imageWidth
         imageFrame.size.height = imageHeight
         
         bgImageFocus.frame = imageFrame
         bgImageFocus.tag = 8888
-        bgImageFocus.alpha = 1.0
+        bgImageFocus.alpha = 0.0
         
         bgImageNormal.frame = imageFrame
         bgImageNormal.tag = 9999
-        bgImageNormal.alpha = 0.0
+        bgImageNormal.alpha = 1.0
         
         self.menuItems[index].addSubview(bgImageFocus)
         self.menuItems[index].addSubview(bgImageNormal)
     }
     
-    func removeImageOverMyMenuItem(isFocus:Bool) {
-        let index = 0
+    func resetAllImage() {
+        for index in (0...3) {
+            if let bgImage = self.menuItems[index].viewWithTag(8888) {
+                bgImage.alpha = 0.0
+            }
+            
+            if let bgImage = self.menuItems[index].viewWithTag(9999) {
+                bgImage.alpha = 1.0
+            }
+        }
+    }
+    
+    func removeImageOverMyMenuItem(index: Int, isFocus: Bool) {
         if isFocus {
             if let bgImage = self.menuItems[index].viewWithTag(8888) {
                 bgImage.alpha = 1.0
